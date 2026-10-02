@@ -1,46 +1,44 @@
-# Astro Starter Kit: Basics
+# Anggik Fantoca — Portfolio
 
-```sh
-npm create astro@latest -- --template basics
-```
+Astro portfolio with a Persona-inspired menu, keyboard/gamepad navigation, and directly addressable project pages.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Development
 
-## 🚀 Project Structure
+Requires Node.js 22.12 or later.
 
-Inside of your Astro project, you'll see the following folders and files:
+- Install dependencies: `npm install`
+- Start in background: `npm exec -- astro dev --background`
+- Inspect or stop: `npm exec -- astro dev status`, `npm exec -- astro dev logs`, `npm exec -- astro dev stop`
+- Static checks: `node --test tests/content.test.mjs`
+- Production build when needed: `npm run build`
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+## Content
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+- `src/scripts/model.js`: design archive and skill groups.
+- `public/data/projects.json`: selected development projects.
+- `public/readmes/`: case studies rendered and sanitized at build time.
+- `src/pages/index.astro`: personal bio and contact links.
+- `src/scripts/`: the only active client script source; Astro bundles these modules.
+- `public/ASSET-CREDITS.md`: image provenance and visual reference.
 
-## 🧞 Commands
+The public portfolio and GitHub account supplied by the owner were used to replace inherited template content. Private project summaries describe capabilities only; no credentials, internal hostnames, client records, or private source code are included.
 
-All commands are run from the root of the project, from a terminal:
+Unverified template case studies, old public script copies, inherited CNAME, CV files, reference profile image and unused starter assets were moved to the ignored `scratch/template-archive/`. They are not served publicly and can be recovered from that directory. A CV-request email link is shown until an approved CV is supplied.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Publishing
 
-## 👀 Want to learn more?
+Set `PUBLIC_SITE_URL` to the actual deployment origin (for example your own HTTPS custom domain) before a production build. Canonical URLs, social image URLs, robots and sitemap use this value. No domain was guessed; the inherited mezdev.xyz configuration is archived.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+The site produces static output in `dist/`. Deploy that directory to your chosen static host. No automatic publishing workflow is enabled.
+
+## Contact
+
+FormSubmit delivers contact messages to the existing business email. Its mailbox activation must be completed by the owner. The form validates fields, prevents concurrent submissions, times out after 15 seconds, and checks the relay's success response. On failure it retains the draft and offers the direct email link. Client validation is not server-side rate limiting; delivery and relay spam protection remain provider responsibilities.
+
+## Sources
+
+- Previous portfolio: https://fantoca.github.io/Fantoca-Portofolio.github.io/
+- Public code: https://github.com/Fantocaa/goravel-inertia-react
+- Visual inspiration: https://github.com/Omicron69/persona5-style-portfolio
+
+The website keeps a small design archive alongside current development work. Any client impact numbers, employer details, educational credentials, and CV must be added only after verification.

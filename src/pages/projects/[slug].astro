@@ -1,0 +1,77 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CaseAudioDock from '../../components/CaseAudioDock.astro';
+import projects from '../../../public/data/projects.json';
+import { readFileSync } from 'node:fs';
+import { renderMarkdown } from '../../lib/markdown.js';
+export function getStaticPaths() {
+  return projects.map(project => ({ params: { slug: project.slug }, props: { project } }));
+}
+const { project } = Astro.props;
+const markdown = readFileSync(new URL('../../../public' + project.readme, import.meta.url), 'utf8');
+const { html, headings } = renderMarkdown(markdown);
+---
+<Layout title={`${project.title} · CASE STUDY`} description={project.desc}>
+  <div class="document-page">
+    <header class="document-header">
+      <a class="back-hint" href="/#projects">◀ Back to Projects</a>
+      <span class="hud-tag">PROJECT DOSSIER</span>
+    </header>
+    <main class="document-layout">
+      <aside class="document-sidebar">
+        <nav aria-label="Table of contents">
+          {headings.map((heading, i) => <a href={`#${heading.id}`}><span>{String(i + 1).padStart(2, '0')}</span> {heading.title}</a>)}
+        </nav>
+      </aside>
+      <article class="document-content">
+        <div class="document-meta"><span>{project.tag}</span><span>{project.badge}</span></div>
+        <div class="markdown-body" set:html={html} />
+        <a class="cv-btn" href="/#projects">◀ Back to Projects</a>
+      </article>
+    </main>
+    <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">↑ Back to top</button>
+  </div>
+  <CaseAudioDock />
+  <script>
+    const documentPage = document.querySelector('.document-page');
+    const backToTop = document.querySelector('[data-back-to-top]');
+    let activeSection = '';
+    const updateSidebar = () => {
+      const headings = [...document.querySelectorAll('.markdown-body h2[id]')];
+      if (!headings.length || !documentPage) return;
+      const threshold = documentPage.getBoundingClientRect().top + 180;
+      let active = headings[0];
+      for (const heading of headings) {
+        if (heading.getBoundingClientRect().top <= threshold) active = heading;
+        else break;
+      }
+      if (active.id === activeSection) return;
+      activeSection = active.id;
+      document.querySelectorAll('.document-sidebar a[href^="#"]').forEach(link => {
+        const selected = link.getAttribute('href') === `#${active.id}`;
+        link.classList.toggle('is-active', selected);
+        if (selected) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    };
+    documentPage?.addEventListener('scroll', () => {
+      backToTop?.classList.toggle('is-visible', documentPage.scrollTop > 480);
+      updateSidebar();
+    }, { passive: true });
+    updateSidebar();
+    backToTop?.addEventListener('click', () => {
+      documentPage?.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    });
+    const returnToProjects = () => {
+      const sameOriginReferrer = document.referrer && new URL(document.referrer).origin === location.origin;
+      if (sameOriginReferrer && history.length > 1) history.back();
+      else location.assign('/#projects');
+    };
+    document.querySelectorAll('a[href="/#projects"]').forEach(link => {
+      link.addEventListener('click', event => { event.preventDefault(); returnToProjects(); });
+    });
+    addEventListener('keydown', e => {
+      if (e.key === 'Escape') returnToProjects();
+    });
+  </script>
+</Layout>

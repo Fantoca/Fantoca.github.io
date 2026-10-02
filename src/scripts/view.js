@@ -5,6 +5,7 @@
 
 const View = {
 
+  muted: false,
   reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
 
   els: {
@@ -12,8 +13,7 @@ const View = {
     menuItems:  [],
     wipe:       document.getElementById("wipe"),
     featGrid:   document.getElementById("feat-grid"),
-    repoGrid:   document.getElementById("repo-grid"),
-    repoStatus: document.getElementById("repo-status"),
+    caseGrid:   document.getElementById("case-grid"),
     skillsBody: document.getElementById("skills-body"),
     sfx:        document.getElementById("sfx-select"),
     cursor:     document.getElementById("cursor"),
@@ -69,6 +69,8 @@ const View = {
     Object.values(s).forEach(sc => sc.classList.remove("active"));
     s[name].classList.add("active");
     s[name].scrollTop = 0;
+    s[name].tabIndex = -1;
+    s[name].focus({ preventScroll: true });
     document.body.dataset.screen = name;
   },
 
@@ -88,6 +90,7 @@ const View = {
 
   /* ---------- Sound ---------- */
   playSelect() {
+    if (this.muted) return;
     try {
       this.els.sfx.currentTime = 0;
       const p = this.els.sfx.play();
@@ -96,11 +99,6 @@ const View = {
   },
 
   /* ---------- Project cards ---------- */
-  cardThumb(src) {
-    return `<div class="thumb"><img src="${src}" alt="" loading="lazy"
-      onerror="this.closest('.thumb').remove()"></div>`;
-  },
-
   // Split "Medical Image…" so the first word renders red
   splitTitle(title) {
     const first = title.split(" ")[0];
@@ -111,12 +109,11 @@ const View = {
     if (this.els.featGrid.childElementCount) return;
     list.forEach((f, i) => {
       const a = document.createElement("a");
-      a.className = "card feat";
+      a.className = "card";
       a.href = f.url; a.target = "_blank"; a.rel = "noopener";
       a.style.setProperty("--tilt", ((this.hash(f.title) % 5) - 2) * 0.8 + "deg");
       a.style.setProperty("--d", i * 70 + "ms");
       a.innerHTML = `
-        ${this.cardThumb(f.img)}
         <span class="lang" style="--lc:${f.color}">${f.tag}</span>
         <h3>${f.live ? '<span class="live-dot"></span>' : ""}${this.splitTitle(f.title)}</h3>
         <p>${f.desc}</p>
@@ -125,55 +122,58 @@ const View = {
     });
   },
 
-  renderRepos(repos, statusText, model) {
-    this.els.repoStatus.textContent = statusText;
-    this.els.repoGrid.innerHTML = "";
-    repos.forEach((r, i) => {
+  renderCaseStudies(list) {
+    if (!this.els.caseGrid || this.els.caseGrid.childElementCount) return;
+    list.forEach((c, i) => {
       const a = document.createElement("a");
-      a.className = "card";
-      a.href = r.html_url; a.target = "_blank"; a.rel = "noopener";
-      a.style.setProperty("--tilt", ((this.hash(r.name) % 5) - 2) * 0.8 + "deg");
+      a.className = "card feat case-card";
+      a.href = `/projects/${encodeURIComponent(c.slug)}/`;
+      a.dataset.slug = c.slug;
+      a.style.setProperty("--tilt", ((this.hash(c.title) % 5) - 2) * 0.8 + "deg");
       a.style.setProperty("--d", i * 70 + "ms");
-      a.style.setProperty("--lc", model.langColors[r.language] || "#e60012");
-      const pretty = r.name.replace(/[-_]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-      const img = model.projectImages[r.name] || `/assets/projects/${r.name}.png`;
+      a.style.setProperty("--lc", c.color || "#e60012");
       a.innerHTML = `
-        ${this.cardThumb(img)}
-        <span class="lang">${r.language || "Repo"}</span>
-        <h3>${this.splitTitle(pretty)}</h3>
-        <p>${r.description || "No description yet, but the code speaks for itself."}</p>
+        <span class="lang" style="--lc:${c.color}">${c.tag}</span>
+        <h3>${this.splitTitle(c.title)}</h3>
+        <p>${c.desc}</p>
         <div class="meta">
-          <span>★ ${r.stargazers_count || 0}</span>
-          <span class="go">View on GitHub →</span>
+          <span>${c.badge}</span>
+          <span class="go">Read Case Study →</span>
         </div>`;
-      this.els.repoGrid.appendChild(a);
+      this.els.caseGrid.appendChild(a);
     });
   },
 
   /* ---------- Skills ---------- */
   renderSkills(groups) {
-    groups.forEach(g => {
-      const div = document.createElement("div");
-      div.className = "skill-group";
-      div.innerHTML = `<h3>${g.group}</h3>`;
-      g.items.forEach(([name, value]) => {
+    groups.forEach(group => {
+      const section = document.createElement("section");
+      section.className = "skill-group";
+      const heading = document.createElement("h3");
+      heading.textContent = group.group;
+      section.appendChild(heading);
+      group.items.forEach(([name, value]) => {
         const row = document.createElement("div");
         row.className = "skill-row";
         row.innerHTML = `
           <span class="name">${name}</span>
-          <div class="skill-bar"><div class="fill" data-v="${value}"></div></div>
+          <div class="skill-bar" role="meter" aria-label="${name}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${value}">
+            <div class="fill" data-v="${value}"></div>
+          </div>
           <span class="lv">${value}</span>`;
-        div.appendChild(row);
+        section.appendChild(row);
       });
-      this.els.skillsBody.appendChild(div);
+      this.els.skillsBody.appendChild(section);
     });
   },
 
   animateSkillBars() {
     const fills = this.els.skillsBody.querySelectorAll(".fill");
-    fills.forEach(f => { f.style.width = "0"; });
+    fills.forEach(fill => { fill.style.width = "0"; });
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      fills.forEach((f, i) => setTimeout(() => { f.style.width = f.dataset.v + "%"; }, i * 60));
+      fills.forEach((fill, index) => {
+        setTimeout(() => { fill.style.width = `${fill.dataset.v}%`; }, index * 60);
+      });
     }));
   },
 
@@ -181,7 +181,7 @@ const View = {
   startClock() {
     setInterval(() => {
       this.els.clock.textContent =
-        new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · LDN";
+        new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · LOCAL";
     }, 1000);
   },
 
@@ -239,3 +239,5 @@ const View = {
     requestAnimationFrame(tick);
   },
 };
+
+export default View;

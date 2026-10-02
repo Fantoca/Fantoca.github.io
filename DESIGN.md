@@ -224,7 +224,7 @@ Tiga suara yang bertabrakan — sesuai Figma Royale & style.css:
 ```html
 <span class="ransom" data-ransom="PROJECTS"></span>
 ```
-JS memecah tiap huruf jadi `.ch` dengan `--t` random rotate ±3deg, lalu `.ch.box` (hitam) / `.ch.boxw` (putih) / `.ch.red` untuk highlight. Hover = `jitter` 0.35s. Wajib replikasi ini untuk headline persona 1:1.
+JS (`src/scripts/view.js` → `.ch` di `View.ransomize`) memecah tiap huruf jadi `.ch` dengan `--t` random rotate ±8deg + scale 0.86-1.15 + dy ±4px, lalu `.ch.box` (hitam) / `.ch.boxw` (putih) / `.ch.red` untuk highlight. Hover = `jitter` 0.35s. Highlight khusus `#big-name .ransom[data-ransom="ANGGIK"] .ch:nth-child(3)` di `style.css` (proper CSS, bukan inline `<style is:global>` hack) — tanpa `!important`. Wajib replikasi ini untuk headline persona 1:1.
 
 **Aturan keras:**
 - Headline = UPPERCASE + SKEW + OUTLINE + HARD SHADOW. Tanpa ini bukan P5.
@@ -234,8 +234,9 @@ JS memecah tiap huruf jadi `.ch` dengan `--t` random rotate ±3deg, lalu `.ch.bo
 
 **Font loading:**
 ```html
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow+Condensed:wght@600;700;800;900&family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Anton&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
 ```
+Sinkron dengan `src/layouts/Layout.astro` — Archivo Black + Anton fallback + Barlow Condensed 600-900.
 
 ## Layout
 
@@ -249,20 +250,21 @@ Anti-grid diagonal yang terkontrol — persis seperti Figma Community.
   - Paper: `rotate(-.6deg)` kiri, `.align-right .paper` `rotate(.6deg)` kanan
   - Menu item selected: `translateX(14px)` + `::before` hitam `skewX(-16deg)` width 108%
 - **Grid:** `grid-template-columns: repeat(auto-fill, minmax(330px,1fr))` gap `26px 34px`. Card overlap via `filter:drop-shadow(7px 7px 0 rgba(0,0,0,.5))`.
-- **Clip-path (signature Figma → CSS):**
-  - Card: `clip-path: polygon(0 6%, 3% 0, 100% 0, 100% 88%, 97% 100%, 0 100%)`
-  - Paper: `clip-path: polygon(0 4%, 2% 0, 100% 0, 100% 94%, 98% 100%, 0 100%)`
-  - Thumb: `clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%)` + overlay `linear-gradient(115deg, transparent 78%, var(--red) 78.5%)`
-  - Slash: `clip-path: polygon(58% 0, 100% 0, 100% 100%, 40% 100%, 52% 62%, 45% 60%, 60% 24%, 51% 22%)` → saat sub-screen jadi `polygon(0 0,100% 0,100% 100%,0 100%)`
-- **Halftone layer:** `#bg-halftone` radial dot 1.6px /14px + `mix-blend:multiply` + drift 30s. Opacity .5 saat `has-art-*`.
-- **Speed lines:** Star SVG `opacity:.16` + `spin 60s` di `#bg` (Figma punya garis 45deg repeating-linear).
+- **Clip-path (signature Figma → CSS):** Token di `:root` sebagai `--clip-card` / `--clip-paper` / `--clip-thumb` / `--clip-slash` / `--clip-tape`, literal di bawah untuk fallback grep:
+  - Card: `clip-path: polygon(0 6%, 3% 0, 100% 0, 100% 88%, 97% 100%, 0 100%)` → `var(--clip-card)`
+  - Paper: `clip-path: polygon(0 4%, 2% 0, 100% 0, 100% 94%, 98% 100%, 0 100%)` → `var(--clip-paper)` (+ `.paper--narrow` max-width 620)
+  - Thumb: `clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%)` → `var(--clip-thumb)` + overlay `linear-gradient(115deg, transparent 78%, var(--red) 78.5%)`
+  - Slash: `clip-path: polygon(58% 0, 100% 0, 100% 100%, 40% 100%, 52% 62%, 45% 60%, 60% 24%, 51% 22%)` → `var(--clip-slash)` → saat sub-screen jadi `polygon(0 0,100% 0,100% 100%,0 100%)`
+  - Tape: `clip-path: polygon(4% 0,96% 8%,100% 92%,0 100%)` → `var(--clip-tape)`
+- **Halftone layer:** `#bg-halftone` radial dot 1.6px / `var(--halftone)` = `14px 14px` + `mix-blend:multiply` + drift 30s (juga `#enter-overlay .enter-bg::before`). Opacity .5 saat `has-art-*`. Literal `14px 14px` tetap untuk grep fidelity.
+- **Speed lines:** Star SVG `opacity:.16` + `spin 60s` di `#bg` (`26vmax`/`34vmax`, `90s` reverse untuk s2) — posisi via `.bg-star--top-left` / `.bg-star--bottom-right` bukan inline `style` (dipindah ke CSS).
 - **Overlap wajib:** Minimal 3 layer tumpuk (halftone → stripes/slash → starburst → card → badge → headline).
 
 ## Elevation & Depth
 
-Nol blur. Semua kedalaman = hard shadow + outline.
+Nol blur. Semua kedalaman = hard shadow + outline. Token di `:root` sebagai `--shadow-hard:7px 7px 0`, `--shadow-hard-sm:6px 6px 0`, `--shadow-paper:10px 10px 0`.
 
-- **Hard Shadow card/button:** `filter: drop-shadow(7px 7px 0 rgba(0,0,0,.5))` default, hover `drop-shadow(10px 10px 0 var(--black))`. Paper: `box-shadow:10px 10px 0 rgba(0,0,0,.55)`. CV button: `box-shadow:7px 7px 0 var(--black)`.
+- **Hard Shadow card/button:** `filter: drop-shadow(7px 7px 0 rgba(0,0,0,.5))` / `var(--shadow-hard) rgba(0,0,0,.5)` default, hover `drop-shadow(10px 10px 0 var(--black))`. Paper: `box-shadow:10px 10px 0 rgba(0,0,0,.55)` / `var(--shadow-paper)`. CV button: `box-shadow:7px 7px 0 var(--black)` / `var(--shadow-hard) var(--black)`. Chip: `6px 6px 0` / `var(--shadow-hard-sm)`. Konsisten: card 7px 7px, chip 6px 6px, paper 10px 10px — semuanya hard tanpa blur.
 - **Text Shadow:** Menu/HUD: `text-shadow:2px 2px 0 var(--black)`. Ransom hover: `jitter` translateY. Hero headline double: `3px 3px 0 #000, 6px 6px 0 var(--red)`.
 - **Outline/Stroke:** Card/paper: border via clip-path + shadow (bukan border). Headline ransom `.ch.box` = background hitam + padding .02em .08em. Fokus: `outline:3px dashed var(--white)`.
 - **Layering z:** bg 0 → slash 1 → shell 2 → star .16 → card 3 on hover → wipe 50 → cursor 9999.
@@ -293,8 +295,8 @@ Semua pakai token reference `{colors.*}` `{typography.*}`. Variant hover = entry
 - **`card-dark` → `.card.feat`:** `ink-black` background, teks white, `drop-shadow` merah-deep, hover merah. `.feat .lang` merah, `.feat .meta .go` putih.
 - **`badge-lang` → `.card .lang`:** Hitam, `rotate(2deg)`, dot `var(--lc)` di `::before`.
 - **`badge-wanted` / `badge-phantom`:** Sticker kecil miring -2deg, shadow 3px, absolute top -8 right -8 overlap.
-- **`dialog-bubble` → `.paper`:** `clip-path` paper, `rotate(-.6deg)`, `box-shadow:10px 10px 0`, `.stamp` hitam rotate -2deg untuk highlight (First-Class Honours).
-- **`hud-tag` → `.hud-tag` / `.grid-label .bar`:** Tag atas kiri miring -2deg/1.5deg, bottom HUD `.key` `skewX(-8deg)` putih-hitam.
+- **`dialog-bubble` → `.paper`:** `clip-path` paper (`var(--clip-paper)`), `rotate(-.6deg)`, `box-shadow:10px 10px 0` / `var(--shadow-paper)`, `.stamp` hitam rotate -2deg untuk highlight (First-Class Honours). `.paper--narrow` untuk max-width 620 (mengganti inline `style="max-width:620px"`).
+- **`hud-tag` → `.hud-tag` / `.grid-label .bar`:** Tag atas kiri miring -2deg/1.5deg, bottom HUD `.key` `skewX(-8deg)` putih-hitam. `#clock` via `#clock{margin-left:auto}` bukan inline.
 - **`form` → `#contact-form .field`:** Input `border:3px solid black`, `skewX(-2deg)`, focus `border-color:red + box-shadow:4px 4px 0 red`.
 - **Hero art:** `#hero-art` `height:min(92vh,900px)` + `filter:drop-shadow(-14px 10px 0 rgba(230,0,18,.85))` + hide saat sub-screen `translateX(60%) skewX(-6deg)`.
 

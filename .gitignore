@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Preserved files inherited from the reference portfolio; never publish these.
+/scratch/template-archive/

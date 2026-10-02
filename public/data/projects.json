@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "goravel-inertia-react",
+    "title": "Goravel + Inertia + React",
+    "tag": "Go · React · TypeScript",
+    "color": "#00ADD8",
+    "badge": "Open Source",
+    "desc": "A full-stack starter kit with authentication, an admin dashboard and a Go backend connected to React through Inertia.",
+    "readme": "/readmes/goravel-inertia-react.md",
+    "img": "/assets/projects/goravel.svg"
+  },
+  {
+    "slug": "event-platform",
+    "title": "Multi-Tenant Event Platform",
+    "tag": "Laravel · React · PostgreSQL",
+    "color": "#FFE600",
+    "badge": "Private Project",
+    "desc": "Event and guest management with separate tenant databases, subdomain-based tenant resolution and a React/Inertia frontend.",
+    "readme": "/readmes/event-platform.md",
+    "img": "/assets/projects/events.svg"
+  },
+  {
+    "slug": "logistics-finance",
+    "title": "Logistics & Finance Workspace",
+    "tag": "Laravel · React · TypeScript",
+    "color": "#3dff6e",
+    "badge": "Private Project",
+    "desc": "Business workflows spanning invoices, receivables, payables and cash/bank reporting in a Laravel and React application.",
+    "readme": "/readmes/logistics-finance.md",
+    "img": "/assets/projects/logistics.svg"
+  },
+  {
+    "slug": "psychotest-platform",
+    "title": "Recruitment Psychotest Platform",
+    "tag": "Laravel · React · TypeScript",
+    "color": "#ff5a36",
+    "badge": "Private Project",
+    "desc": "A recruitment assessment platform with applicant test links, section-based questions, result reports and administrative controls.",
+    "readme": "/readmes/psychotest-platform.md",
+    "img": "/assets/projects/psychotest.svg"
+  },
+  {
+    "slug": "career-portal",
+    "title": "Career & Recruitment Portal",
+    "tag": "Laravel · Inertia · React",
+    "color": "#00ADD8",
+    "badge": "Private Project",
+    "desc": "A career portal for vacancy discovery, role details, internship and professional application flows, and CV submission.",
+    "readme": "/readmes/career-portal.md",
+    "img": "/assets/projects/career.svg"
+  },
+  {
+    "slug": "react-window-manager",
+    "title": "React Window Manager",
+    "tag": "React · Next.js · Zustand",
+    "color": "#a78bfa",
+    "badge": "Open Source",
+    "desc": "A reusable desktop-style layout engine with draggable windows, resizing, snap zones, minimized docks and persistent state.",
+    "readme": "/readmes/react-window-manager.md",
+    "img": "/assets/projects/window-manager.svg"
+  },
+  {
+    "slug": "wedding-invitation",
+    "title": "Wedding Invitation & RSVP",
+    "tag": "Next.js · Supabase · TypeScript",
+    "color": "#f472b6",
+    "badge": "Private Project",
+    "desc": "A personalized invitation experience paired with guest administration, invitation-code lookup and RSVP tracking.",
+    "readme": "/readmes/wedding-invitation.md",
+    "img": "/assets/projects/invitation.svg"
+  }
+]
