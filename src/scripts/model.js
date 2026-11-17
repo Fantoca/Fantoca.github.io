@@ -2,8 +2,9 @@ import projects from '../../public/data/projects.json' with { type: 'json' };
 const Model = {
   contactEmail: "fantocaa17@gmail.com",
   music: [
-    { id: "auXYzfrmVbw", title: "Persona 5 Royal Relaxing Mix", source: "YouTube" },
-    { id: "rto5hPN46io", title: "Persona 5 Relaxing Mix", source: "YouTube" },
+    { title: 'Beneath the Mask - Rain', src: '/assets/music/beneath-the-mask.mp3' },
+    { title: 'Life Will Change', src: '/assets/music/life-will-change.mp3' },
+    { title: 'Last Surprise', src: '/assets/music/last-surprise.mp3' },
   ],
   state: { screen: "home", menuIndex: 0, skillsBuilt: false },
   featured: [

@@ -1,25 +1,19 @@
 # Logistics & Finance Workspace
 
-A Laravel and React application for operational and financial workflows.
+For an operations team, issuing an invoice is only the start of the story. Payments may arrive later or be corrected, amounts remain receivable or payable, and the same activity has to make sense in cash and bank reports. The workspace brings those connected steps into one application.
 
-## Application scope
+## The problem to solve
 
-The application includes master data, transactions, cash and bank workflows, and financial reporting. Its interface uses TypeScript and React alongside a PHP backend.
+A list of transactions is not enough if staff cannot tell what has been paid, what is still outstanding, and how a correction affects the balance. Reports also need to remain understandable when someone changes the date range or selects a different cash or bank account.
 
-## Engineering work
+## How I approached it
 
-Development includes invoice payment calculations, receivables and payables, settlement corrections and reporting. These workflows depend on consistent balances across transaction entry and report views.
+I worked on the invoice payment calculations, receivables and payables, and settlement corrections alongside the reporting views. The cash and bank reports bring forward an opening balance, apply date and account filters, and show a running balance. They can also be exported to PDF or a spreadsheet when the team needs to review the figures outside the app.
 
-## Reporting
+Laravel handles the transaction and reporting logic; React and TypeScript provide the workspace where staff enter and inspect records. The transaction and reporting views need to describe the same underlying activity, even after a payment is corrected.
 
-Cash and bank reporting includes opening balances, date and account filtering, running balances, and PDF or spreadsheet exports.
+## What this delivers
 
-## Design considerations
+Staff can review the same financial activity at different stages: what was invoiced, what has been settled, and how it appears in the cash or bank report.
 
-Financial workflows need clear relationships between transactions, corrections and reports. The interface needs to communicate those relationships while keeping filtering and record review practical.
-
-## Project access
-
-This is a private project. This overview omits client records, internal configuration and source code. No performance or business-impact figures are claimed.
-
-[Discuss a similar project](mailto:fantocaa17@gmail.com)
+This is a private project. Client records and source code are not published here. [Discuss a similar project](mailto:fantocaa17@gmail.com).

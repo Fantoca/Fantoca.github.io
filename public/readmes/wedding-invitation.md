@@ -1,28 +1,17 @@
 # Wedding Invitation & RSVP
 
-A personalized digital invitation with a private administration area for guest and attendance management.
+A couple needs an invitation that feels personal to each guest, and a practical way to know who plans to attend. Making a separate page for every person would be cumbersome to maintain; collecting replies without a guest list would leave the organizers doing the matching by hand.
 
-## Guest experience
+## The problem to solve
 
-Guests can open an invitation using an individual invitation code and respond through the RSVP flow. The public experience combines event information and media with a presentation designed for mobile viewing.
+The public invitation and the private guest list have different jobs. Guests should be able to open their invitation and reply easily on a phone. The organizer needs to manage guest records and see attendance status without exposing that information to everyone visiting the page.
 
-## Administration
+## How I approached it
 
-The protected dashboard supports guest creation, editing and removal, invitation-code management and RSVP status tracking. This keeps public presentation and operational guest management within the same application.
+I built one invitation experience that looks up a guest by an individual invitation code. That lets the page show a personalized invitation and connect its RSVP to the right record. A protected dashboard handles guest creation, edits, invitation codes, and attendance tracking. The public page and the administrative work share the same application data without sharing the same access.
 
-## Architecture
+Next.js and React provide the invitation and dashboard; TypeScript covers the interface and server routes, with Supabase supporting the data layer. The central decision is using one maintained invitation experience with guest-specific access, rather than duplicating pages.
 
-- Next.js and React provide both the invitation and dashboard experiences.
-- TypeScript is used across the interface and server routes.
-- Supabase provides application data integration.
-- Form validation and authenticated routes protect administrative workflows.
+## What this delivers
 
-## Engineering focus
-
-The project connects a highly visual public page with structured guest data. Individual access codes allow one deployed invitation to produce a personalized experience without maintaining separate pages for every guest.
-
-## Project access
-
-This is a private project. Guest information, access codes, credentials and private source code are not included in this portfolio.
-
-[Discuss a similar project](mailto:fantocaa17@gmail.com)
+Guests have a direct way to view and answer their invitation, while the organizers can follow responses in one place. This is a private project; guest details, invitation codes, and source code are not published here. [Discuss a similar project](mailto:fantocaa17@gmail.com).

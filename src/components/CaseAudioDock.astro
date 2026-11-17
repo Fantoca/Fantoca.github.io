@@ -6,16 +6,15 @@
       <span>NOW PLAYING</span>
       <button id="music-close" type="button" aria-label="Close music player">×</button>
     </div>
-    <p id="music-title">Persona 5 Royal Relaxing Mix</p>
-    <div id="youtube-player" class="youtube-player" aria-label="YouTube music player"></div>
+    <p id="music-title">Beneath the Mask - Rain</p>
+    <audio id="music-audio" preload="none" loop></audio>
     <label class="music-volume" for="music-volume">
       <span>VOLUME</span>
       <input id="music-volume" type="range" min="0" max="100" step="1" value="20" />
       <output id="music-volume-value" for="music-volume">20%</output>
     </label>
-    <div id="music-list" class="music-list" aria-label="Choose a mix"></div>
-    <a id="music-youtube-link" href="https://www.youtube.com/watch?v=auXYzfrmVbw" target="_blank" rel="noopener">Open on YouTube ↗</a>
-    <p class="music-note">Music is streamed from YouTube. Playback starts after your first interaction.</p>
+    <div id="music-list" class="music-list" aria-label="Choose a track"></div>
+    <p id="music-status" class="music-note" role="status">Playback starts after your first interaction.</p>
   </section>
 </div>
 

@@ -21,6 +21,10 @@ Requires Node.js 22.12 or later.
 - `src/scripts/`: the only active client script source; Astro bundles these modules.
 - `public/ASSET-CREDITS.md`: image provenance and visual reference.
 
+## Languages
+
+The language switcher uses English by default and remembers the visitor's choice. For a project in `public/data/projects.json`, keep the existing English fields and add optional Indonesian text under `i18n.id` (for example `title`, `badge`, and `desc`). Shared fields such as the image, slug, and technology tags only need to be entered once. Missing translations fall back to English. An optional `i18n.id.readme` can point to an Indonesian Markdown case study in `public/readmes/`; without it, the English case study is shown.
+
 The public portfolio and GitHub account supplied by the owner were used to replace inherited template content. Private project summaries describe capabilities only; no credentials, internal hostnames, client records, or private source code are included.
 
 Unverified template case studies, old public script copies, inherited CNAME, CV files, reference profile image and unused starter assets were moved to the ignored `scratch/template-archive/`. They are not served publicly and can be recovered from that directory. A CV-request email link is shown until an approved CV is supplied.

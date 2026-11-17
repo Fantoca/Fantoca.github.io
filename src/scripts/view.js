@@ -1,3 +1,4 @@
+import { t, projectForLocale } from './i18n.js';
 /* =====================================================================
    VIEW — everything that draws to the screen. No app logic lives here;
    the Controller tells the View what to show.
@@ -107,7 +108,8 @@ const View = {
 
   renderFeatured(list) {
     if (this.els.featGrid.childElementCount) return;
-    list.forEach((f, i) => {
+    list.forEach((original, i) => {
+      const f = { ...original, tag: t(original.tag), desc: t(original.desc), cta: t(original.cta) };
       const a = document.createElement("a");
       a.className = "card";
       a.href = f.url; a.target = "_blank"; a.rel = "noopener";
@@ -117,14 +119,15 @@ const View = {
         <span class="lang" style="--lc:${f.color}">${f.tag}</span>
         <h3>${f.live ? '<span class="live-dot"></span>' : ""}${this.splitTitle(f.title)}</h3>
         <p>${f.desc}</p>
-        <div class="meta"><span>${f.live ? "LIVE NOW" : "HIGHLIGHT"}</span><span class="go">${f.cta}</span></div>`;
+        <div class="meta"><span>${t(f.live ? "LIVE NOW" : "HIGHLIGHT")}</span><span class="go">${f.cta}</span></div>`;
       this.els.featGrid.appendChild(a);
     });
   },
 
   renderCaseStudies(list) {
     if (!this.els.caseGrid || this.els.caseGrid.childElementCount) return;
-    list.forEach((c, i) => {
+    list.forEach((original, i) => {
+      const c = projectForLocale(original);
       const a = document.createElement("a");
       a.className = "card feat case-card";
       a.href = `/projects/${encodeURIComponent(c.slug)}/`;
@@ -138,7 +141,7 @@ const View = {
         <p>${c.desc}</p>
         <div class="meta">
           <span>${c.badge}</span>
-          <span class="go">Read Case Study →</span>
+          <span class="go">${t("Read Case Study →")}</span>
         </div>`;
       this.els.caseGrid.appendChild(a);
     });
@@ -150,9 +153,10 @@ const View = {
       const section = document.createElement("section");
       section.className = "skill-group";
       const heading = document.createElement("h3");
-      heading.textContent = group.group;
+      heading.textContent = t(group.group);
       section.appendChild(heading);
-      group.items.forEach(([name, value]) => {
+      group.items.forEach(([originalName, value]) => {
+        const name = t(originalName);
         const row = document.createElement("div");
         row.className = "skill-row";
         row.innerHTML = `
@@ -181,7 +185,7 @@ const View = {
   startClock() {
     setInterval(() => {
       this.els.clock.textContent =
-        new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · LOCAL";
+        new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · " + t("LOCAL");
     }, 1000);
   },
 

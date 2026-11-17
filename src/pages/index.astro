@@ -49,8 +49,8 @@ import Layout from '../layouts/Layout.astro';
         <span class="ransom" data-ransom="FANTOCA">FANTOCA</span>
       </h2>
       <div class="enter-meta">
-        <p class="enter-sub">FULL-STACK DEVELOPMENT · PRODUCT INTERFACES</p>
-        <p class="enter-detail">Building interfaces, application logic and AI-assisted workflows.</p>
+        <p class="enter-sub">FULL-STACK DEVELOPER</p>
+        <p class="enter-detail">From the first idea to a product people can use.</p>
       </div>
       <div class="enter-cta">
         <span class="enter-btn" id="enter-btn"><span class="enter-btn__label">▶ ENTER PORTFOLIO ◀</span></span>
@@ -73,20 +73,19 @@ import Layout from '../layouts/Layout.astro';
             <span>NOW PLAYING</span>
             <button id="music-close" type="button" aria-label="Close music player">×</button>
           </div>
-          <p id="music-title">Persona 5 Royal Relaxing Mix</p>
-          <div id="youtube-player" class="youtube-player" aria-label="YouTube music player"></div>
+          <p id="music-title">Beneath the Mask - Rain</p>
+          <audio id="music-audio" preload="none" loop></audio>
           <label class="music-volume" for="music-volume">
             <span>VOLUME</span>
             <input id="music-volume" type="range" min="0" max="100" step="1" value="20" />
             <output id="music-volume-value" for="music-volume">20%</output>
           </label>
-          <div id="music-list" class="music-list" aria-label="Choose a mix"></div>
-          <a id="music-youtube-link" href="https://www.youtube.com/watch?v=auXYzfrmVbw" target="_blank" rel="noopener">Open on YouTube ↗</a>
-          <p class="music-note">Music is streamed from YouTube. Playback starts after your first interaction.</p>
+          <div id="music-list" class="music-list" aria-label="Choose a track"></div>
+          <p id="music-status" class="music-note" role="status">Playback starts after your first interaction.</p>
         </section>
       </div>
       <div class="hud-tag">Portfolio // Moch. Anggik Fantoca</div>
-      <div class="hud-tag alt">Indonesia · Full-Stack Development</div>
+      <div class="hud-right"><div class="hud-tag alt">Indonesia · Full-Stack Development</div><label class="language-picker"><span class="sr-only">Language / Bahasa</span><select data-language-select aria-label="Language / Bahasa"><option value="en">EN</option><option value="id">ID</option></select></label></div>
     </div>
 
     <main id="stage">
@@ -125,7 +124,7 @@ import Layout from '../layouts/Layout.astro';
         <button class="back-hint" data-back>ESC · Back</button>
         <div class="grid-label"><span class="bar"></span>Featured</div>
         <div id="case-grid" class="grid"></div>
-        <div class="grid-label"><span class="bar"></span>All Projects</div>
+        <div class="grid-label"><span class="bar"></span>Earlier Design &amp; Web Work</div>
         <div id="feat-grid" class="grid"></div>
       </section>
 
@@ -145,9 +144,9 @@ import Layout from '../layouts/Layout.astro';
             <img src="/assets/projects/portrait.png" alt="Anggik Fantoca" loading="lazy" />
             <figcaption>Anggik Fantoca · Indonesia</figcaption>
           </figure>
-          <p>I am a full-stack developer with experience building and maintaining web applications that support operational, financial and event-management workflows. My work covers the full delivery cycle, from understanding requirements and structuring application flows to implementing, integrating and refining production-ready features.</p>
-          <p>I have contributed to systems involving multi-tenant data isolation, role-based processes, transaction and finance workflows, and reusable application foundations. These projects have strengthened my ability to work across interconnected parts of a product while keeping maintainability, reliability and user needs in view.</p>
-          <p>My earlier background in UI/UX and visual design complements my engineering work by helping me translate complex requirements into interfaces that are clear, consistent and practical. I am also interested in applied AI and use AI-assisted workflows for research, prototyping, debugging and documentation while keeping technical decisions and final implementation under deliberate review.</p>
+          <p>I'm a full-stack developer who enjoys turning complex needs into web applications people can use every day. My work spans operational, financial and event-management systems, as well as tools for other developers.</p>
+          <p>I work independently, from understanding what a project needs and designing the interface to building the application and preparing it for launch. I pay attention to how each part works together, so the result is easier to use and maintain.</p>
+          <p>My background in UI/UX and visual design shapes how I approach each project. I also use AI to support research, explore ideas and solve problems, while staying directly involved in the work and decisions behind the result.</p>
           <p><a href="https://www.linkedin.com/in/mochammad-anggik-fantoca-424b7a1b2/" target="_blank" rel="noopener">Visit my LinkedIn ↗</a></p>
         </div>
         <a class="cv-btn" href="mailto:fantocaa17@gmail.com?subject=CV%20request"><span>Request my CV ↗</span></a>
@@ -158,7 +157,7 @@ import Layout from '../layouts/Layout.astro';
         <div class="screen-head"><span class="ransom" data-ransom="CONTACT">CONTACT</span></div>
         <button class="back-hint" data-back>ESC · Back</button>
         <div class="paper paper--narrow">
-          <p>Have a web application, interface, or collaboration in mind? Tell me what you’re working on. You can send a message below or contact me directly.</p>
+          <p>Have a project, opportunity or collaboration in mind? I’d be glad to hear from you. Send a message below or contact me directly.</p>
         </div>
         <div class="contact-list">
           <a class="contact-chip" href="mailto:fantocaa17@gmail.com"><span>Email ✉</span></a>

@@ -1,3 +1,4 @@
+import { t, translatePage } from './i18n.js';
 import Model from './model.js';
 import View from './view.js';
 
@@ -11,6 +12,8 @@ const Controller = {
 
   init() {
     View.init();
+    this.updateLanguage();
+    document.addEventListener("languagechange", () => this.updateLanguage());
     this.initAudio();
     this.bindMenu();
     this.bindKeyboard();
@@ -52,6 +55,23 @@ const Controller = {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); dismiss(true); }
     });
     if (location.hash) { overlay?.remove(); shell.inert = false; this.restoreRoute(); }
+  },
+
+  updateLanguage() {
+    document.querySelectorAll("[data-ransom]").forEach(el => {
+      if (!el.dataset.ransomEn) el.dataset.ransomEn = el.dataset.ransom;
+      el.dataset.ransom = t(el.dataset.ransomEn);
+      View.ransomize(el);
+    });
+    if (View.els.featGrid) View.els.featGrid.replaceChildren();
+    if (View.els.caseGrid) View.els.caseGrid.replaceChildren();
+    if (View.els.skillsBody) View.els.skillsBody.replaceChildren();
+    Model.state.skillsBuilt = false;
+    if (Model.state.screen === "projects" || this.caseOpen) this.loadProjects();
+    if (Model.state.screen === "skills") this.loadSkills();
+    if (this.audioEls) this.updateSoundUi();
+    translatePage();
+    if (this.caseOpen) { this.activeCaseSection = ""; this.updateCaseSidebar(); }
   },
 
   /* ---------- In-shell project case studies ---------- */
@@ -103,7 +123,9 @@ const Controller = {
       this.play();
       await new Promise(resolve => View.wipe(() => {
         this.caseView.replaceChildren(...content.cloneNode(true).childNodes);
+        for (const key of ['titleEn', 'titleId', 'descriptionEn', 'descriptionId']) this.caseView.dataset[key] = content.dataset[key] || '';
         this.caseView.hidden = false;
+        translatePage(this.caseView);
         this.caseView.scrollTop = 0;
         this.caseOpen = true;
         this.activeCaseSection = "";
@@ -111,10 +133,11 @@ const Controller = {
         document.body.dataset.screen = "case";
         document.title = page.title || `CASE STUDY · ${this.baseTitle}`;
         if (updateHistory) history.pushState({ caseStudy: true }, "", href);
-        this.caseView.querySelector("h1")?.setAttribute("tabindex", "-1");
+        translatePage(this.caseView);
+        this.caseView.querySelector('[data-language-content]:not([hidden]) h1')?.setAttribute("tabindex", "-1");
         this.updateCaseSidebar();
       }, () => {
-        this.caseView.querySelector("h1")?.focus({ preventScroll: true });
+        this.caseView.querySelector('[data-language-content]:not([hidden]) h1')?.focus({ preventScroll: true });
         resolve();
       }));
     } catch {
@@ -126,7 +149,7 @@ const Controller = {
 
   updateCaseSidebar() {
     if (!this.caseOpen && this.caseView.hidden) return;
-    const headings = [...this.caseView.querySelectorAll(".markdown-body h2[id]")];
+    const headings = [...this.caseView.querySelectorAll("[data-language-content]:not([hidden]) .markdown-body h2[id]")];
     if (!headings.length) return;
     const threshold = this.caseView.getBoundingClientRect().top + 180;
     let active = headings[0];
@@ -171,19 +194,18 @@ const Controller = {
     if (location.pathname === "/" && !closedCase) this.restoreRoute();
   },
 
-  /* ---------- Site audio & YouTube background music ---------- */
+  /* ---------- Site audio & background music ---------- */
   initAudio() {
     this.currentTrack = 0;
-    this.musicStarted = false;
     this.audioEls = {
       toggle: document.getElementById("sound-toggle"),
       panelToggle: document.getElementById("music-panel-toggle"),
       panel: document.getElementById("music-player"),
       close: document.getElementById("music-close"),
-      mount: document.getElementById("youtube-player"),
+      audio: document.getElementById("music-audio"),
       title: document.getElementById("music-title"),
       list: document.getElementById("music-list"),
-      link: document.getElementById("music-youtube-link"),
+      status: document.getElementById("music-status"),
       volume: document.getElementById("music-volume"),
       volumeValue: document.getElementById("music-volume-value"),
     };
@@ -196,6 +218,10 @@ const Controller = {
     this.musicVolume = Number.isFinite(savedVolume) && savedVolume >= 0 && savedVolume <= 100
       ? savedVolume
       : 20;
+    this.audioEls.audio.volume = this.musicVolume / 100;
+    this.audioEls.audio.addEventListener("error", () => {
+      this.audioEls.status.textContent = t("Unable to load this track. Choose another track or try again.");
+    });
     this.audioEls.volume.value = String(this.musicVolume);
     this.updateVolumeUi();
     this.updateSoundUi();
@@ -218,7 +244,7 @@ const Controller = {
       this.musicVolume = Number(event.currentTarget.value);
       localStorage.setItem("fantoca-music-volume", String(this.musicVolume));
       this.updateVolumeUi();
-      this.sendMusicCommand("setVolume", [this.musicVolume]);
+      this.audioEls.audio.volume = this.musicVolume / 100;
     });
   },
 
@@ -231,7 +257,7 @@ const Controller = {
     const { toggle } = this.audioEls;
     if (!toggle) return;
     toggle.setAttribute("aria-pressed", String(!View.muted));
-    toggle.textContent = View.muted ? "SOUND OFF" : "SOUND ON";
+    toggle.textContent = View.muted ? t("SOUND OFF") : t("SOUND ON");
     document.body.classList.toggle("sound-on", !View.muted);
   },
 
@@ -249,7 +275,6 @@ const Controller = {
       button.classList.toggle("active", index === this.currentTrack);
       button.addEventListener("click", () => {
         this.currentTrack = index;
-        this.musicStarted = false;
         this.audioUnlocked = true;
         this.updateTrackDetails();
         if (!View.muted) this.startMusic();
@@ -262,45 +287,31 @@ const Controller = {
   updateTrackDetails() {
     const track = Model.music[this.currentTrack];
     this.audioEls.title.textContent = track.title;
-    this.audioEls.link.href = `https://www.youtube.com/watch?v=${track.id}`;
+    if (this.audioEls.audio.getAttribute("src") !== track.src) {
+      this.audioEls.audio.src = track.src;
+      this.audioEls.status.textContent = t("Playback starts after your first interaction.");
+    }
     [...this.audioEls.list.children].forEach((button, index) => button.classList.toggle("active", index === this.currentTrack));
   },
 
   startMusic() {
     if (View.muted || !this.audioUnlocked) return;
-    if (this.musicStarted) {
-      this.sendMusicCommand("setVolume", [this.musicVolume]);
-      this.sendMusicCommand("playVideo");
-      return;
-    }
-    const track = Model.music[this.currentTrack];
-    const iframe = document.createElement("iframe");
-    iframe.title = track.title;
-    iframe.allow = "autoplay; encrypted-media; picture-in-picture";
-    iframe.referrerPolicy = "strict-origin-when-cross-origin";
-    const origin = encodeURIComponent(location.origin);
-    iframe.src = `https://www.youtube-nocookie.com/embed/${track.id}?autoplay=1&loop=1&playlist=${track.id}&controls=1&rel=0&enablejsapi=1&origin=${origin}`;
-    iframe.allowFullscreen = true;
-    iframe.addEventListener("load", () => {
-      // The player API becomes available just after the iframe document loads.
-      setTimeout(() => this.sendMusicCommand("setVolume", [this.musicVolume]), 250);
-      setTimeout(() => this.sendMusicCommand("setVolume", [this.musicVolume]), 1000);
+    const { audio, status } = this.audioEls;
+    const src = audio.src;
+    audio.play().then(() => {
+      if (audio.src === src && !audio.paused) status.textContent = t("Playing.");
+    }).catch(error => {
+      if (audio.src === src && error.name !== "AbortError" && !View.muted) {
+        status.textContent = error.name === "NotAllowedError"
+          ? t("Playback was blocked. Turn sound off and on to retry.")
+          : t("Unable to play this track. Choose another track or try again.");
+      }
     });
-    this.audioEls.mount.replaceChildren(iframe);
-    this.musicStarted = true;
   },
 
   stopMusic() {
-    this.sendMusicCommand("pauseVideo");
-  },
-
-  sendMusicCommand(command, args = []) {
-    const iframe = this.audioEls.mount?.querySelector("iframe");
-    iframe?.contentWindow?.postMessage(JSON.stringify({
-      event: "command",
-      func: command,
-      args,
-    }), "https://www.youtube-nocookie.com");
+    this.audioEls.audio.pause();
+    this.audioEls.status.textContent = t("Sound is off.");
   },
 
   restoreRoute() {
@@ -327,11 +338,11 @@ const Controller = {
       const data = Object.fromEntries(new FormData(form).entries());
       if (data._honey) return;  // honeypot caught a bot
       if (!data.name.trim() || !data.email.trim() || !data.message.trim()) {
-        status.textContent = "Fill in all three fields first.";
+        status.textContent = t("Fill in all three fields first.");
         return;
       }
       btn.disabled = true;
-      status.textContent = "Sending…";
+      status.textContent = t("Sending…");
       try {
         const res = await fetch(`https://formsubmit.co/ajax/${Model.contactEmail}`, {
           method: "POST",
@@ -347,11 +358,11 @@ const Controller = {
         if (!res.ok) throw new Error(res.status);
         const result = await res.json();
         if (result.success !== true && result.success !== "true") throw new Error("Relay rejected message");
-        status.textContent = "Message accepted. Thank you for reaching out.";
+        status.textContent = t("Message accepted. Thank you for reaching out.");
         form.reset();
         this.play();
       } catch {
-        status.textContent = "Message was not confirmed. Your draft is saved here; retry or use the Email link above.";
+        status.textContent = t("Message was not confirmed. Your draft is saved here; retry or use the Email link above.");
       } finally {
         btn.disabled = false;
       }
@@ -467,9 +478,9 @@ const Controller = {
     const setHudGamepad = (isPS) => {
       if (!hudBottom) return;
       // Replace Enter/Esc hints with controller layout: ✕/A confirm, ○/B back, analog scroll
-      const confirm = isPS ? "✕ Confirm" : "A Confirm";
-      const back = isPS ? "○ Back" : "B Back";
-      hudBottom.innerHTML = `<span><span class="key">↕</span>Select</span><span><span class="key">${confirm.split(" ")[0]}</span>${confirm.split(" ").slice(1).join(" ")}</span><span><span class="key">${back.split(" ")[0]}</span>${back.split(" ").slice(1).join(" ")}</span><span><span class="key">LS</span>Scroll</span><span id="clock"></span>`;
+      const confirm = isPS ? "✕" : "A";
+      const back = isPS ? "○" : "B";
+      hudBottom.innerHTML = `<span><span class="key">↕</span>${t("Select")}</span><span><span class="key">${confirm}</span>${t("Confirm")}</span><span><span class="key">${back}</span>${t("Back")}</span><span><span class="key">LS</span>${t("Scroll")}</span><span id="clock"></span>`;
       // re-bind clock ref
       View.els.clock = document.getElementById("clock");
     };

@@ -9,23 +9,32 @@ export function getStaticPaths() {
 }
 const { project } = Astro.props;
 const markdown = readFileSync(new URL('../../../public' + project.readme, import.meta.url), 'utf8');
-const { html, headings } = renderMarkdown(markdown);
+const english = renderMarkdown(markdown);
+const idReadme = project.i18n?.id?.readme;
+const idContent = idReadme ? renderMarkdown(readFileSync(new URL('../../../public' + idReadme, import.meta.url), 'utf8')) : english;
+// Both variants share the DOM, so their anchors must remain unique.
+const indonesian = {
+  html: idContent.html.replace(/\bid="([^"]+)"/g, 'id="id-$1"').replace(/href="#([^"]+)"/g, 'href="#id-$1"'),
+  headings: idContent.headings.map(heading => ({ ...heading, id: `id-${heading.id}` })),
+};
 ---
 <Layout title={`${project.title} · CASE STUDY`} description={project.desc}>
-  <div class="document-page">
+  <div class="document-page" data-title-en={project.title} data-title-id={project.i18n?.id?.title} data-description-en={project.desc} data-description-id={project.i18n?.id?.desc}>
     <header class="document-header">
       <a class="back-hint" href="/#projects">◀ Back to Projects</a>
-      <span class="hud-tag">PROJECT DOSSIER</span>
+      <div class="document-header-actions"><span class="hud-tag">PROJECT DOSSIER</span><label class="language-picker"><span class="sr-only">Language / Bahasa</span><select data-language-select aria-label="Language / Bahasa"><option value="en">EN</option><option value="id">ID</option></select></label></div>
     </header>
     <main class="document-layout">
       <aside class="document-sidebar">
         <nav aria-label="Table of contents">
-          {headings.map((heading, i) => <a href={`#${heading.id}`}><span>{String(i + 1).padStart(2, '0')}</span> {heading.title}</a>)}
+          {[['en', english], ['id', indonesian]].map(([language, content]) => <div data-language-content={language} hidden={language === 'id'}>{content.headings.map((heading, i) => <a href={`#${heading.id}`}><span>{String(i + 1).padStart(2, '0')}</span> {heading.title}</a>)}</div>)}
         </nav>
       </aside>
       <article class="document-content">
-        <div class="document-meta"><span>{project.tag}</span><span>{project.badge}</span></div>
-        <div class="markdown-body" set:html={html} />
+        <div class="document-meta"><span>{project.tag}</span><span data-project-en={project.badge} data-project-id={project.i18n?.id?.badge}>{project.badge}</span></div>
+        <p data-markdown-fallback={String(!idReadme)} hidden>Studi kasus ini tersedia dalam bahasa Inggris.</p>
+        <div data-language-content="en" lang="en"><div class="markdown-body" set:html={english.html} /></div>
+        <div data-language-content="id" lang={idReadme ? "id" : "en"} hidden><div class="markdown-body" set:html={indonesian.html} /></div>
         <a class="cv-btn" href="/#projects">◀ Back to Projects</a>
       </article>
     </main>
@@ -37,7 +46,7 @@ const { html, headings } = renderMarkdown(markdown);
     const backToTop = document.querySelector('[data-back-to-top]');
     let activeSection = '';
     const updateSidebar = () => {
-      const headings = [...document.querySelectorAll('.markdown-body h2[id]')];
+      const headings = [...document.querySelectorAll('[data-language-content]:not([hidden]) .markdown-body h2[id]')];
       if (!headings.length || !documentPage) return;
       const threshold = documentPage.getBoundingClientRect().top + 180;
       let active = headings[0];
@@ -59,6 +68,7 @@ const { html, headings } = renderMarkdown(markdown);
       updateSidebar();
     }, { passive: true });
     updateSidebar();
+    document.addEventListener('languagechange', () => { activeSection = ''; updateSidebar(); });
     backToTop?.addEventListener('click', () => {
       documentPage?.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     });

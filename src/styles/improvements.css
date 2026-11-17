@@ -1,4 +1,10 @@
 body { user-select: auto; }
+.hud-right, .document-header-actions { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.language-picker { flex: none; }
+.language-picker select { background: #111; color: #fff; border: 2px solid #fff; padding: 7px; font-weight: 800; cursor: pointer; }
+.language-picker select:focus-visible { outline: 3px solid #ffe600; outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+[data-language-content][hidden], [data-markdown-fallback][hidden] { display: none !important; }
 #stage { min-height: 0; }
 #screen-home.active { justify-content: flex-start; padding-top: 3vh; padding-bottom: 32px; }
 .audio-dock { position: fixed; right: 20px; bottom: 12px; z-index: 40; display: flex; gap: 7px; align-items: flex-end; }
@@ -10,9 +16,6 @@ body { user-select: auto; }
 .music-player__head { display: flex; align-items: center; justify-content: space-between; color: #ffe600; font: 900 13px/1 Arial,sans-serif; letter-spacing: .15em; }
 #music-close { border: 0; background: transparent; color: white; font: 900 25px/1 Arial,sans-serif; cursor: pointer; }
 #music-title { margin: 10px 0; font: 900 20px/1.15 'Archivo Black',Arial,sans-serif; }
-.youtube-player { position: relative; aspect-ratio: 16/9; overflow: hidden; background: #000; border: 2px solid #444; }
-.youtube-player:empty::after { content: "SOUND IS OFF"; position: absolute; inset: 0; display: grid; place-items: center; color: #888; font: 800 12px Arial,sans-serif; letter-spacing: .12em; }
-.youtube-player iframe { width: 100%; height: 100%; border: 0; }
 .music-volume { display: grid; grid-template-columns: auto minmax(0,1fr) 38px; align-items: center; gap: 9px; margin: 12px 0; color: #ffe600; font: 900 11px/1 Arial,sans-serif; letter-spacing: .1em; }
 .music-volume input { width: 100%; height: 5px; margin: 0; appearance: none; background: linear-gradient(90deg,#ffe600 0 var(--volume),#555 var(--volume) 100%); border: 1px solid #000; cursor: pointer; }
 .music-volume input::-webkit-slider-thumb { appearance: none; width: 14px; height: 18px; background: var(--red); border: 2px solid white; box-shadow: 2px 2px #000; }
@@ -21,7 +24,6 @@ body { user-select: auto; }
 .music-list { display: grid; gap: 5px; margin: 10px 0; }
 .music-list button { padding: 8px; border: 1px solid #555; background: #19191e; color: white; text-align: left; font: 700 13px/1.25 'Barlow Condensed',Arial,sans-serif; cursor: pointer; }
 .music-list button:hover,.music-list button.active { border-color: #ffe600; color: #ffe600; }
-#music-youtube-link { color: white; font-size: 13px; }
 .music-note { margin: 8px 0 0; color: #aaa; font: 600 11px/1.35 Arial,sans-serif; }
 :is(a,button):focus-visible { outline: 3px solid #ffe600; outline-offset: 5px; }
 .form-note { font-size: 15px; line-height: 1.5; margin: 12px 0; }
@@ -37,6 +39,7 @@ body[data-screen="case"] #hud-top > .hud-tag { visibility: hidden; }
 .document-layout { display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 30px; max-width: 1320px; padding: 0 24px 80px; margin: auto; align-items: start; }
 .document-sidebar { position: sticky; top: 24px; min-width: 0; padding: 20px; background: #111; border: 2px solid white; box-shadow: 7px 7px #111; }
 .document-sidebar nav { display: grid; gap: 8px; margin-top: 0; max-height: 65vh; overflow-x: hidden; overflow-y: auto; }
+.document-sidebar nav > div:not([hidden]) { display: grid; gap: 8px; }
 .document-sidebar a { min-width: 0; color: white; text-decoration: none; padding: 10px 12px; line-height: 1.4; border-bottom: 1px solid #555; overflow-wrap: anywhere; transition: color .2s ease,background-color .2s ease,border-color .2s ease,box-shadow .2s ease; }
 .document-sidebar a span { color: #ffe600; transition: color .2s ease; }
 .document-sidebar a:hover { color: #ffe600; background: rgba(255,255,255,.07); }
@@ -71,6 +74,8 @@ body[data-screen="case"] #hud-top > .hud-tag { visibility: hidden; }
   .document-sidebar nav { max-height: 180px; }
   #hud-top { gap: 12px; padding: 14px 16px 0; }
   .hud-tag { font-size: 11px; letter-spacing: .04em; }
+  .hud-right .hud-tag { display: none; }
+  .document-header { flex-wrap: wrap; }
   #big-name { max-width: 100%; }
   #big-name .ransom { font-size: clamp(35px,9vw,65px); }
   #hud-bottom { padding-left: 16px; padding-right: 165px; gap: 6px; }

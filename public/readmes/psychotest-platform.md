@@ -1,29 +1,19 @@
 # Recruitment Psychotest Platform
 
-A recruitment assessment application that connects applicant testing with administrative review and reporting.
+A recruitment team needs to invite applicants to take an assessment and then review their results. Applicants need a straightforward test experience, while the people managing questions and reports need a protected workspace. Both sides belong to the same process, but they should not share the same access.
 
-## Assessment workflow
+## The problem to solve
 
-Administrators create individual psychotest links and organise questions into test sections. Applicants open a public test link, complete each section and submit their answers without entering the protected administration workspace.
+Sending someone a test link solves only the invitation. The questions still need to be organized, the applicant needs to move through the test sections, and the result needs to come back in a form a recruiter can actually review or share.
 
-## Reporting
+## How I approached it
 
-Completed assessments produce detailed and skill-oriented report views. Reports can be shared through controlled links or exported as PDF documents for the recruitment workflow.
+I built the administrative flow for creating individual test links, managing questions and sections, and reviewing applicant records. Applicants use a public link to start a section and submit answers without entering the administration area. The reporting flow provides detailed and skill-oriented views, controlled links for sharing reports, and a PDF export.
 
-## Administration
+The Laravel backend connects the test, submission, and reporting workflows. React, TypeScript, and Inertia provide the interfaces on both sides. Roles, permissions, and audit logs support the protected administrative work.
 
-- Psychotest link creation, restart and removal.
-- Question and section management.
-- Applicant transaction records.
-- User, role, permission and position management.
-- Audit logs and application backups.
+## What this delivers
 
-## Architecture
+Recruiters have a path from preparing an assessment to reviewing its report. Applicants use a separate route that keeps the administration workspace out of their test experience.
 
-Laravel provides the backend and authenticated workflows, while React, TypeScript and Inertia provide the administration and assessment interfaces. The interface also uses rich-text, table, chart and document-viewing components where the workflow requires them.
-
-## Project access
-
-This is the private `module-psychotest` repository. This overview excludes applicant data, assessment material, credentials and private source code.
-
-[Discuss a similar project](mailto:fantocaa17@gmail.com)
+This is the private `module-psychotest` project. Applicant information, test material, and source code are not published here. [Discuss a similar project](mailto:fantocaa17@gmail.com).
